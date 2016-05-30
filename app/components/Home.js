@@ -7,13 +7,17 @@ var axios = require('axios');
 var $ = require('jquery');
 var PropTypes = React.PropTypes;
 
+require('../css/main.css');
+
 var Home = React.createClass({
     getInitialState: function() {
         return {
             currentBand: undefined,
             query: "",
             words: ["", ""],
-            wordList: wordHelpers.words
+            wordList: wordHelpers.words,
+            isLoading: false,
+            noBandFound: false
         };
     },
     getChildContext:function(){
@@ -44,7 +48,8 @@ var Home = React.createClass({
 
         this.setState({
             wordList: newWordList,
-            words: newWords
+            words: newWords,
+            noBandFound: false
         }, () => {
             if ( (this.state.words[0] !== "") && (this.state.words[1] !== "") ) {
                 this.submitWords();
@@ -63,7 +68,9 @@ var Home = React.createClass({
 
             this.setState({
                 words: newWords,
-                wordList: newWordList
+                wordList: newWordList,
+                noBandFound: false,
+                currentBand: undefined
             });
         }
     },
@@ -71,19 +78,24 @@ var Home = React.createClass({
         // TO DO: Check for bands with space in between, then check for no-space if 0 results received.
         axios.get('http://localhost:3000/' + this.state.words.join(' '))
             .then((data) => {
-                if ( data.data.aaData.length === 0 ) {
-                    //No results found. Run a search without space.
-                    axios.get('http://localhost:3000/' + this.state.words.join(''))
-                        .then((data) => {
-                            if ( data.data.aaData.length === 0 ) {
-                                this.noBandFound();
-                            } else {
-                                this.verifySameName(this.packageBandData(data.data.aaData[0]));
-                            }
-                        });
-                } else {
-                    this.verifySameName(this.packageBandData(data.data.aaData[0]));
-                }
+                this.setState({
+                    isLoading: true
+                }, () => {
+                    if ( data.data.aaData.length === 0 ) {
+                        //No results found. Run a search without space.
+                        axios.get('http://localhost:3000/' + this.state.words.join(''))
+                            .then((data) => {
+                                if ( data.data.aaData.length === 0 ) {
+                                    this.noBandFound();
+                                } else {
+                                    this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                                }
+                            });
+                    } else {
+                        this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                    }
+                });
+                
                 
             })
     },
@@ -109,6 +121,7 @@ var Home = React.createClass({
     },
     updateCurrentBand(bandData) {
         this.setState({
+            isLoading: false,
             currentBand: bandData
         }, function () {
             console.log(this.state.currentBand)
@@ -117,26 +130,41 @@ var Home = React.createClass({
     noBandFound() {
         // Display "no band found" message instead of band info
         this.setState({
-            currentBand: undefined
+            isLoading: false,
+            currentBand: undefined,
+            noBandFound: true
         })
     },
     render: function() {
 
         return (
-            <div>
+            <div className="container">
                 <WordList words={this.state.wordList} />
-                <SelectedWordContainer index={0} word={this.state.words[0]} />
-                <SelectedWordContainer index={1} word={this.state.words[1]} />
-                { this.state.currentBand !== undefined ? 
-                (
-                    <div className="band-info">
-                        <a href={this.state.currentBand.link}>{this.state.currentBand.name}</a> is a {this.state.currentBand.genre} band from {this.state.currentBand.country}.
-                    </div>
-                ) : (
-                    <div>No band found</div>
-                )
-
-                }
+                <div className="selected-words">
+                    <SelectedWordContainer index={0} word={this.state.words[0]} />
+                    <SelectedWordContainer index={1} word={this.state.words[1]} />
+                </div>
+                <div className="search-results">
+                    { this.state.currentBand !== undefined && 
+                    (
+                        <div className="band-info">
+                            <a href={this.state.currentBand.link}>{this.state.currentBand.name}</a> is a {this.state.currentBand.genre} band from {this.state.currentBand.country}.
+                        </div>
+                    )}
+                    { this.state.noBandFound && 
+                    (
+                        <div>No bands with that name... yet.</div>
+                    )}
+                    { this.state.isLoading && 
+                    (
+                        <div>Loading...</div>
+                    )}
+                    { ( !this.state.isLoading && !this.state.noBandFound && (this.state.currentBand === undefined) ) && 
+                    (
+                        <div>Choose two words to combine.</div>
+                    )}
+                </div>
+                
                 
 
             </div>

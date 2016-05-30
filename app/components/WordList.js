@@ -14,7 +14,7 @@ var WordList = React.createClass({
     render: function() {
         
         return (
-            <ul>
+            <ul className="word__list u-unlist">
                 {getWordComponents(this.props.words)}
             </ul>
         );
