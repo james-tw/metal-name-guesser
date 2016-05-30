@@ -10,7 +10,17 @@ var wordHelpers = {
         'angel',
         'satanic',
         'cult',
-        'death'
+        'death',
+        'hell',
+        'night',
+        'soul',
+        'fire',
+        'god',
+        'necro',
+        'metal',
+        'hate',
+        'war',
+        'dead'
     ]
 } 
 

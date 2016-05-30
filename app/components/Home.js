@@ -10,7 +10,7 @@ var PropTypes = React.PropTypes;
 var Home = React.createClass({
     getInitialState: function() {
         return {
-            data: {},
+            currentBand: undefined,
             query: "",
             words: ["", ""],
             wordList: wordHelpers.words
@@ -71,15 +71,54 @@ var Home = React.createClass({
         // TO DO: Check for bands with space in between, then check for no-space if 0 results received.
         axios.get('http://localhost:3000/' + this.state.words.join(' '))
             .then((data) => {
-                var firstResult = data.data.aaData[0];
-                $('.js-band-link').html(firstResult[0]);
-                $('.js-band-genre').html(firstResult[1]);
-                $('.js-band-country').html(firstResult[2]);
-
-                this.setState({
-                    data: data.data
-                })
+                if ( data.data.aaData.length === 0 ) {
+                    //No results found. Run a search without space.
+                    axios.get('http://localhost:3000/' + this.state.words.join(''))
+                        .then((data) => {
+                            if ( data.data.aaData.length === 0 ) {
+                                this.noBandFound();
+                            } else {
+                                this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                            }
+                        });
+                } else {
+                    this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                }
+                
             })
+    },
+    packageBandData(rawData) {
+        var bandData = {
+            name: $(rawData[0])[0].text,
+            link: $(rawData[0])[0].href,
+            genre: rawData[1],
+            country: rawData[2]
+        }
+        return bandData;
+    },
+    verifySameName(bandData) {
+        var rawBandName = bandData.name.replace(/[^a-zA-Z]+/g, "").toLowerCase();
+        var rawQueryName = this.state.words.join('').replace(/[^a-zA-Z]+/g, "").toLowerCase();
+
+        if ( rawBandName == rawQueryName ) {
+            // Found a match. Send band data to updateCurrentBand(bandData)
+            this.updateCurrentBand(bandData);
+        } else {
+            this.noBandFound();
+        }
+    },
+    updateCurrentBand(bandData) {
+        this.setState({
+            currentBand: bandData
+        }, function () {
+            console.log(this.state.currentBand)
+        })
+    },
+    noBandFound() {
+        // Display "no band found" message instead of band info
+        this.setState({
+            currentBand: undefined
+        })
     },
     render: function() {
 
@@ -88,9 +127,17 @@ var Home = React.createClass({
                 <WordList words={this.state.wordList} />
                 <SelectedWordContainer index={0} word={this.state.words[0]} />
                 <SelectedWordContainer index={1} word={this.state.words[1]} />
-                <div className="band-info">
-                    <span className="js-band-link"></span> is a <span className="js-band-genre"></span> band from <span className="js-band-country"></span>.
-                </div>
+                { this.state.currentBand !== undefined ? 
+                (
+                    <div className="band-info">
+                        <a href={this.state.currentBand.link}>{this.state.currentBand.name}</a> is a {this.state.currentBand.genre} band from {this.state.currentBand.country}.
+                    </div>
+                ) : (
+                    <div>No band found</div>
+                )
+
+                }
+                
 
             </div>
         );
