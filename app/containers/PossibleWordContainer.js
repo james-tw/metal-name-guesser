@@ -3,6 +3,10 @@ var Word = require('../components/Word');
 
 
 var WordContainer = React.createClass({
+    propTypes: {
+        word: React.PropTypes.string,
+        handleClick: React.PropTypes.func
+    },
     contextTypes: {
         enterWord: React.PropTypes.any
     },
@@ -11,7 +15,9 @@ var WordContainer = React.createClass({
     },
     render: function() {
         return (
-            <Word word={this.props.word} handleClick={this.handleClick}/>
+            <Word 
+                word={this.props.word} 
+                handleClick={this.handleClick} />
         );
     }
 

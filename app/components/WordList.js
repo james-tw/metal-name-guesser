@@ -1,10 +1,12 @@
 var React = require('react');
-var WordContainer = require('../containers/WordContainer');
+var PropTypes = React.PropTypes;
+var PossibleWordContainer = require('../containers/PossibleWordContainer');
+
 
 function getWordComponents(words) {
     return words.map((val) => {
         return (
-            <WordContainer word={val} />
+            <PossibleWordContainer word={val} key={val}/>
         )
     })
 }
@@ -21,5 +23,9 @@ var WordList = React.createClass({
     }
 
 });
+
+WordList.propTypes = {
+    words: React.PropTypes.array
+}
 
 module.exports = WordList;

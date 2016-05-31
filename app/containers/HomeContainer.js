@@ -1,5 +1,4 @@
 var React = require('react');
-var PropTypes = React.PropTypes;
 var axios = require('axios');
 var $ = require('jquery');
 var wordHelpers = require('../utils/wordHelpers');

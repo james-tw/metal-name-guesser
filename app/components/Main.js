@@ -1,5 +1,4 @@
-import React from 'react';
-
+var React = require('react');
 
 var Main = React.createClass({
 

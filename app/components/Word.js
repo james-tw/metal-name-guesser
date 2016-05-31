@@ -8,4 +8,9 @@ function Word(props) {
     )
 }
 
+Word.propTypes = {
+    handleClick: React.PropTypes.func.isRequired,
+    word: React.PropTypes.string
+}
+
 module.exports = Word;
