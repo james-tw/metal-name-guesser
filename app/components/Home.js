@@ -1,11 +1,10 @@
 var React = require('react');
-var metal = require('../utils/metal');
-var wordHelpers = require('../utils/wordHelpers');
-var WordList = require('./WordList');
-var SelectedWordContainer = require('../containers/SelectedWordContainer');
+var PropTypes = React.PropTypes;
 var axios = require('axios');
 var $ = require('jquery');
-var PropTypes = React.PropTypes;
+var wordHelpers = require('../utils/wordHelpers');
+var WordList = require('../components/WordList');
+var SelectedWordContainer = require('../containers/SelectedWordContainer');
 
 require('../css/main.css');
 
@@ -75,7 +74,7 @@ var Home = React.createClass({
         }
     },
     submitWords() {
-        // TO DO: Check for bands with space in between, then check for no-space if 0 results received.
+        // Check for bands with space in between
         axios.get('http://localhost:3000/' + this.state.words.join(' '))
             .then((data) => {
                 this.setState({
@@ -112,8 +111,8 @@ var Home = React.createClass({
         var rawBandName = bandData.name.replace(/[^a-zA-Z]+/g, "").toLowerCase();
         var rawQueryName = this.state.words.join('').replace(/[^a-zA-Z]+/g, "").toLowerCase();
 
-        if ( rawBandName == rawQueryName ) {
-            // Found a match. Send band data to updateCurrentBand(bandData)
+        if ( rawBandName === rawQueryName ) {
+            // Found a match. 
             this.updateCurrentBand(bandData);
         } else {
             this.noBandFound();
@@ -123,9 +122,7 @@ var Home = React.createClass({
         this.setState({
             isLoading: false,
             currentBand: bandData
-        }, function () {
-            console.log(this.state.currentBand)
-        })
+        });
     },
     noBandFound() {
         // Display "no band found" message instead of band info
@@ -138,7 +135,7 @@ var Home = React.createClass({
     render: function() {
 
         return (
-            <div className="container">
+            <div>
                 <WordList words={this.state.wordList} />
                 <div className="selected-words">
                     <SelectedWordContainer index={0} word={this.state.words[0]} />
