@@ -4,6 +4,17 @@ var $ = require('jquery');
 var wordHelpers = require('../utils/wordHelpers');
 var Home = require('../components/Home');
 
+
+function packageBandData(rawData) {
+    var bandData = {
+        name: $(rawData[0])[0].text,
+        link: $(rawData[0])[0].href,
+        genre: rawData[1],
+        country: rawData[2]
+    }
+    return bandData;
+}
+
 var HomeContainer = React.createClass({
     getInitialState: function() {
         return {
@@ -83,25 +94,16 @@ var HomeContainer = React.createClass({
                                 if ( data.data.aaData.length === 0 ) {
                                     this.noBandFound();
                                 } else {
-                                    this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                                    this.verifySameName(packageBandData(data.data.aaData[0]));
                                 }
                             });
                     } else {
-                        this.verifySameName(this.packageBandData(data.data.aaData[0]));
+                        this.verifySameName(packageBandData(data.data.aaData[0]));
                     }
                 });
                 
                 
             })
-    },
-    packageBandData(rawData) {
-        var bandData = {
-            name: $(rawData[0])[0].text,
-            link: $(rawData[0])[0].href,
-            genre: rawData[1],
-            country: rawData[2]
-        }
-        return bandData;
     },
     verifySameName(bandData) {
         var rawBandName = bandData.name.replace(/[^a-zA-Z]+/g, "").toLowerCase();
