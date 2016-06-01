@@ -2,7 +2,7 @@ var React = require('react');
 var WordList = require('../components/WordList');
 var SelectedWordContainer = require('../containers/SelectedWordContainer');
 
-require('../css/main.css');
+require('../sass/main.scss');
 
 function Home (props) {
     return (
