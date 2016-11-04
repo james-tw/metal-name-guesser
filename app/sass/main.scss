@@ -19,6 +19,12 @@
     border: 1px solid black;
 
     font-size: 1.25em;
+
+    &__list {
+        > li {
+            display: inline-block;
+        }
+    }
 }
 
 .search-results {

@@ -1,7 +1,7 @@
 var React = require('react');
 var axios = require('axios');
 var $ = require('jquery');
-var wordHelpers = require('../utils/wordHelpers');
+var { words } = require('../utils/wordHelpers');
 var Home = require('../components/Home');
 
 import {getBands} from '../utils/ajax';
@@ -23,7 +23,7 @@ var HomeContainer = React.createClass({
             currentBand: undefined,
             query: "",
             words: ["", ""],
-            wordList: wordHelpers.words,
+            wordList: words,
             isLoading: false,
             noBandFound: false
         };

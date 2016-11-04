@@ -1,31 +1,32 @@
-var React = require('react');
-var PropTypes = React.PropTypes;
-var PossibleWordContainer = require('../containers/PossibleWordContainer');
+import React from 'react';
+import { connect } from 'react-redux';
+
+import { selectWord } from '../actions';
+
+import Word from '../components/Word';
+
+const WordList = ({ words, onWordClick }) => 
+    <ul className="word__list u-unlist">
+        {words.map(word => 
+            <li key={word}>
+                <Word 
+                    text={word}
+                    onClick={() => onWordClick(word)} />
+            </li>
+        )}
+    </ul>
 
 
-function getWordComponents(words) {
-    return words.map((val) => {
-        return (
-            <PossibleWordContainer word={val} key={val}/>
-        )
-    })
-}
-
-var WordList = React.createClass({
-    
-    render: function() {
-        
-        return (
-            <ul className="word__list u-unlist">
-                {getWordComponents(this.props.words)}
-            </ul>
-        );
+const mapStateToProps = (state) => {
+    return {
+        words: state.wordList
     }
-
-});
-
-WordList.propTypes = {
-    words: React.PropTypes.array
 }
-
-module.exports = WordList;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onWordClick: (word) => {
+            dispatch(selectWord(word));
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(WordList);

@@ -1,16 +1,9 @@
-var React = require('react');
+import React from 'react';
+import { connect } from 'react-redux';
 
-function Word(props) {
-    return (
-        <li className="word" onClick={props.handleClick}>
-            {props.word}
-        </li>
-    )
-}
+const Word = ({ onClick, text }) => 
+    <div className="word" onClick={onClick}>
+        {text}
+    </div>
 
-Word.propTypes = {
-    handleClick: React.PropTypes.func.isRequired,
-    word: React.PropTypes.string
-}
-
-module.exports = Word;
+export default Word;

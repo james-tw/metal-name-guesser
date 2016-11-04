@@ -1,8 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, hashHistory } from 'react-router';
-import routes from './config/routes';
+import { Provider } from 'react-redux';
+
+import store from './store/configureStore';
+
+import AppRoot from './containers/AppRoot';
+
 
 ReactDOM.render(
-    routes,
-    document.getElementById('app'));
+    <Provider store={store}>
+        <AppRoot />
+    </Provider>,
+    document.getElementById('app')
+)
