@@ -4,6 +4,8 @@ var $ = require('jquery');
 var wordHelpers = require('../utils/wordHelpers');
 var Home = require('../components/Home');
 
+import {getBands} from '../utils/ajax';
+
 
 function packageBandData(rawData) {
     var bandData = {
@@ -85,14 +87,14 @@ var HomeContainer = React.createClass({
             isLoading: true
         });
         // Check for bands with space in between
-        axios.get('http://localhost:3000/' + this.state.words.join(' '))
+        getBands(this.state.words.join(' '))
             .then((data) => {
                 if ( data.data.aaData.length === 0 ) {
                     //No results found. Run a search without space.
-                    axios.get('http://localhost:3000/' + this.state.words.join(''))
+                    getBands(this.state.words.join(''))
                         .then((data) => {
                             if ( data.data.aaData.length === 0 ) {
-                                this.noBandFound();
+                                this.setNoBandFound();
                             } else {
                                 this.verifySameName(packageBandData(data.data.aaData[0]));
                             }
@@ -110,7 +112,7 @@ var HomeContainer = React.createClass({
             // Found a match. 
             this.updateCurrentBand(bandData);
         } else {
-            this.noBandFound();
+            this.setNoBandFound();
         }
     },
     updateCurrentBand(bandData) {
@@ -119,7 +121,7 @@ var HomeContainer = React.createClass({
             currentBand: bandData
         });
     },
-    noBandFound() {
+    setNoBandFound() {
         // Display "no band found" message instead of band info
         this.setState({
             isLoading: false,
