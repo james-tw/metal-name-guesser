@@ -81,29 +81,26 @@ var HomeContainer = React.createClass({
         }
     },
     submitWords() {
+        this.setState({
+            isLoading: true
+        });
         // Check for bands with space in between
         axios.get('http://localhost:3000/' + this.state.words.join(' '))
             .then((data) => {
-                this.setState({
-                    isLoading: true
-                }, () => {
-                    if ( data.data.aaData.length === 0 ) {
-                        //No results found. Run a search without space.
-                        axios.get('http://localhost:3000/' + this.state.words.join(''))
-                            .then((data) => {
-                                if ( data.data.aaData.length === 0 ) {
-                                    this.noBandFound();
-                                } else {
-                                    this.verifySameName(packageBandData(data.data.aaData[0]));
-                                }
-                            });
-                    } else {
-                        this.verifySameName(packageBandData(data.data.aaData[0]));
-                    }
-                });
-                
-                
-            })
+                if ( data.data.aaData.length === 0 ) {
+                    //No results found. Run a search without space.
+                    axios.get('http://localhost:3000/' + this.state.words.join(''))
+                        .then((data) => {
+                            if ( data.data.aaData.length === 0 ) {
+                                this.noBandFound();
+                            } else {
+                                this.verifySameName(packageBandData(data.data.aaData[0]));
+                            }
+                        });
+                } else {
+                    this.verifySameName(packageBandData(data.data.aaData[0]));
+                }
+            });
     },
     verifySameName(bandData) {
         var rawBandName = bandData.name.replace(/[^a-zA-Z]+/g, "").toLowerCase();
