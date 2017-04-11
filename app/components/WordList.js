@@ -7,9 +7,10 @@ import Word from '../components/Word';
 
 const WordList = ({ words, onWordClick }) => 
     <ul className="word__list u-unlist">
-        {words.map(word => 
-            <li key={word}>
+        {words.map((word, index) => 
+            <li>
                 <Word 
+                    index={index}
                     text={word}
                     onClick={() => onWordClick(word)} />
             </li>
